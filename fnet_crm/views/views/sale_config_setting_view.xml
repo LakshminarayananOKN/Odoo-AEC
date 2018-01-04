@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="view_sales_config_inherit" model="ir.ui.view">
+            <field name="name">sale settings crm</field>
+            <field name="model">sale.config.settings</field>
+            <field name="inherit_id" ref="sale.view_sales_config"/>
+            <field name="arch" type="xml">
+				<xpath expr="//form[@name='sale_config_form']" position="inside">
+					<group>
+						<group>
+							<field name="limit_id"/>
+						</group>
+						<group></group>
+					</group>
+                </xpath>
+                
+			</field>
+	</record>			
+				
+</odoo>	

@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_oppor_orderline_user,opportunity.order.line,model_opportunity_order_line,sales_team.group_sale_salesman,1,1,1,1
+access_oppor_orderline_manager,opportunity.order.line,model_opportunity_order_line,sales_team.group_sale_manager,1,1,1,1
+access_sale_quotes_manager,sale.quotes.line,model_sale_quotes_line,purchase.group_purchase_manager,1,1,1,1
+access_sale_quotes_user,sale.quotes.line,model_sale_quotes_line,purchase.group_purchase_user,1,1,1,1
+access_bid_received_line_manager,bid.received.line,model_bid_received_line,purchase.group_purchase_manager,1,1,1,1
+access_bid_received_line_user,bid.received.line,model_bid_received_line,purchase.group_purchase_user,1,1,1,1
+access_costing_history_line_manager,costing.history.line,model_costing_history_line,purchase.group_purchase_manager,1,1,1,1
+access_costing_history_line_user,costing.history.line,model_costing_history_line,purchase.group_purchase_user,1,1,1,1
+access_bid_received_history_manager,Bid.received.history,model_bid_received_history,purchase.group_purchase_manager,1,1,1,1
+access_bid_received_history_user,Bid.received.history,model_bid_received_history,purchase.group_purchase_user,1,1,1,1
+access_margin_rate_manager,margin.rate,model_margin_rate,purchase.group_purchase_manager,1,1,1,1
+access_margin_rate_user,margin.rate,model_margin_rate,purchase.group_purchase_user,1,1,1,1
+access_approve_limit_manager,approve.limit,model_approve_limit,sales_team.group_sale_manager,1,1,1,1
+access_approve_limit_user,approve.limit,model_approve_limit,sales_team.group_sale_salesman,1,1,1,1

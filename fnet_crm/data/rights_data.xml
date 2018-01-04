@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        
+
+        <record model="ir.module.category" id="module_categorys_fnet_crm">
+            <field name="name">Opportunity and Tender</field>
+            <field name="description"></field>
+            <field name="sequence">10</field>
+        </record>
+        
+        
+
+    </data>
+</openerp>

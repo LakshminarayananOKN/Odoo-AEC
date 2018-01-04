@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		<record id="crm_team_view_form_inherit" model="ir.ui.view">
+            <field name="name">crm.team.form</field>
+            <field name="model">crm.team</field>
+            <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
+            <field name="arch" type="xml">
+				
+				<xpath expr="//field[@name='user_id']" position="after">
+					<field name="from_date"  class="oe_inline"/>
+					<field name="to_date"   class="oe_inline"/>
+					<field name="limit_id" groups="sales_team.group_sale_manager"/>
+				</xpath>
+				<xpath expr="//form/sheet/notebook" position="inside">
+					<page string="Budget Info" name="more_info" groups="sales_team.group_sale_manager">
+						<field name="budget_line" mode="tree">
+							<tree string="Budget Lines" editable="bottom" >
+                                    <field name="type"/>
+                                    <field name="apr"/>
+                                    <field name="may"/>
+                                    <field name="jun"/>
+                                    <field name="jul"/>
+                                    <field name="aug"/>
+                                    <field name="sep"/>
+                                    <field name="octt"/>
+                                    <field name="nov"/>
+                                    <field name="dec"/>
+                                    <field name="jan"/>
+                                    <field name="feb"/>
+                                    <field name="mar"/>
+                                    <field name="invoice_value"/>
+                            </tree>
+						</field>
+					</page>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</odoo>				

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<report
+			id="budget_analysis"
+			model="budget.wizard"
+			string="Budget Anlaysis "
+			report_type="qweb-pdf"
+			name="fnet_crm.report_budget"
+			file="fnet_crm.report_budget"
+		/>
+	<template id="report_budget">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<div class="page">
+					<div class="header">
+						<div class="col-xs-12">
+							<div style="border-bottom:1px solid black;">
+								<span style="font-size:30px;font-family:Liberation Serif"><center><b><span t-field="res_company.name"/></b></center></span>
+							</div>
+							<div>
+								<span style="font-size:22px"><center><b>BUDGET AND ACTUAL SUMMARY</b></center></span>
+							</div>
+						</div>
+					</div>
+					<style>
+						.table-bordered thead > tr > th, .table-bordered > tbody > tr > td{border-style:solid;border-color: black;}
+					</style>
+				   <div>
+						<table width="100%">
+							<tr style="font-family:Liberation Serif">
+								<td width="100">
+									<span style="font-size:16px"><center>Date From <span t-field="o.date_from" t-field-options='{"format": "dd-MM-y"}'/> To <span t-field="o.date_to" t-field-options='{"format": "dd-MM-y"}'/></center></span>
+								 </td>
+							</tr>
+						</table>
+					</div>
+					<div>
+						<table width="100%">
+							<tr>
+								<td width="100" style="padding-bottom:10px"></td>
+							</tr>
+						</table>
+					</div>
+					<div class="container">
+						<div class="col-xs-12 col-sm-6">
+							<t t-set="budget" t-value="[]"/>
+							<table class="table table-bordered" width="100%">
+								<thead>
+									<tr class="border-bottom-0" style="font-family:Liberation Serif;border-top:1px solid black !important;">
+										<th width="1%" class="text-center">S.No</th>
+										<th class="text-center">Category/Salesperson</th>
+										<t t-foreach="get_details(o)"  t-as="p">
+											<t t-set="budget" t-value="budget+[p[0]]"/>
+											<th class="text-center"><span t-esc="p[1]"/></th>
+										</t>
+									</tr>
+								</thead>
+								<tbody>
+									<t t-set="counter" t-value="1"/>
+										<t t-foreach="get_category(o,budget)" t-as="a">
+											<tr  class ="border" style="font-family:Liberation Serif;font-size:12px;page-break-inside: avoid;">
+												<td style="text-align:center"><span><b t-esc="counter"/><t t-set="counter" t-value="counter+1"/></span></td>
+												<td><span style="text-align:left"  t-esc="a['type']"/></td>
+												<t t-foreach="a['total']"  t-as="p">
+													<td style="text-align:right"  ><span t-esc="p"/></td>
+												</t>
+												<t t-foreach="get_sale_details(o,a['categ'],budget)" t-as="sale">
+													<tr style="page-break-inside:avoid;">
+														<td colspan="4"></td>
+														<td class="text-left"><span t-esc="sale['sale_person']"/></td>
+														<t t-foreach="sale['total']"  t-as="p">
+															<td style="text-align:right"  ><span t-esc="p"/></td>
+														</t>
+													</tr>
+												</t>
+											</tr>
+										</t>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				</t>
+			</t>
+		</template>
+	</data>
+</openerp>
+

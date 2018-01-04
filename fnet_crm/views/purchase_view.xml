@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+		<record id="purchase_order_form_inherit" model="ir.ui.view">
+				<field name="name">purchase.order.inherit</field>
+				<field name="model">purchase.order</field>
+				<field name="inherit_id" ref="purchase.purchase_order_form"/>
+				<field name="arch" type="xml">
+					<xpath expr="//button[4]" position="after">
+<!--
+						attrs="{'invisible': [('state', '=', 'to approve')]}"
+-->
+				         <button name="bid_received" string="Bid Received" type="object" states="sent" 
+						   class="oe_highlight" groups="purchase.group_purchase_user,purchase.group_purchase_manager"/>
+					</xpath>
+					<xpath expr="//button[@name='print_quotation'][@states='draft']" position="after">
+						<button name="send_rfq" states="draft" type="object" string="Confirm RFQ"/>
+					</xpath>
+					<xpath expr="//field[@name='state']" position="replace">
+						<field name="state" widget="statusbar" statusbar_visible="draft,sent,purchase,done" readonly="1" />
+					</xpath>
+                    <xpath expr="//button[@id='draft_confirm']" position="attributes">
+						<attribute name="invisible">True</attribute>
+					</xpath>
+					<xpath expr="//button[@id='bid_confirm']" position="attributes">
+						<attribute name="invisible">True</attribute> 
+					</xpath>
+					<xpath expr="//button[@id='bid_confirm']" position="after">
+						<button name="button_confirm" type="object" states="bid received" string="Confirm Order" class="oe_highlight" id="bid_confirm"/>
+					</xpath>
+					<xpath expr="//button[@name='button_cancel']" position="replace">
+						<button name="button_cancel" states="bid received" string="Cancel" type="object" />
+					</xpath>
+                     <xpath expr="//button[@name='action_view_invoice']" position="replace">
+                         <button type="object" name="action_view_invoice" class="oe_stat_button" icon="fa-pencil-square-o">
+                            <field name="invoice_count" widget="statinfo" string="Bills"/>
+                        </button>
+                    </xpath>
+					<xpath expr="//page[1]" position="after">
+						<page name="costing" string="Costing" groups="purchase.group_purchase_user,purchase.group_purchase_manager">
+							<form>
+								<header>
+									<button name="get_purchase_quote" string="Get Order" type="object" class="oe_highlight" 
+									  attrs="{'invisible':[('states','!=','load')]}"/>
+									<button name="set_margin_price" string="Margin Calculate" type="object" class="oe_highlight"
+									  attrs="{'invisible':[('states','!=','in_progress')]}"/>
+									<button name="bids_confirm" string="Confirm" type="object" class="oe_highlight"
+									attrs="{'invisible':[('states','!=','in_progress')]}"/>
+									<button name="return_draft" string="Return To Load" type="object" class="oe_highlight"
+									attrs="{'invisible':[('states','!=','done')]}"/>
+									<field name="states" widget="statusbar" statusbar_visible="load,in_progress,done"/>
+								 </header>
+								
+									<field name="margin_line" widget="one2many_list" attrs="{'readonly':[('states','=','done')]}">
+										<tree editable="bottom" create="false" delete="false">
+											<field name="product_id"/>
+											<field name="quantity" sum="Total Quantity"/>
+											<field name="purchase_unit_price" sum="Purchase Price" widget="monetary"/>
+											<field name="purchase_total_price" invisible="1"/>
+											<field name="margin_percentages" widget="selection"/>
+											<field name="transfort_charge" sum="Total Transfort Charge" widget="monetary"/>
+											<field name="margin_unit_price" sum ="Total Unit Price" widget="monetary"/>
+											<field name="customer_price" sum="Total customer Price" widget="monetary"/>
+										</tree>
+								   </field>
+							</form>
+						</page>
+					</xpath>
+				    <xpath expr="//page[@name='costing']" position="after">
+						<page string="Costing History" groups="purchase.group_purchase_user,purchase.group_purchase_manager">
+							<field name="history_line" readonly="True">
+								<tree>
+									<field name="offer"/>
+								</tree>
+								<form>
+									<field name="costing_history_line">
+										<tree>
+											<field name="product_id"/>
+											<field name="quantity" sum="Total Quantity"/>
+											<field name="unit_measure"/>
+											<field name="purchase_unit_price" sum="Purchase Price" widget="monetary"/>
+											<field name="margin_percentages"/>
+											<field name="transfort_charge" sum="Total Transfort Charge" widget="monetary"/>
+											<field name="margin_unit_price" sum ="Total Unit Price" widget="monetary"/>
+											<field name="customer_price" sum="Total customer Price" widget="monetary"/>
+										</tree>
+									</field>
+									
+								</form>
+							</field>
+						</page>
+				    </xpath>
+				</field>
+		</record>
+		
+		 <record id="sale_margin_tree" model="ir.ui.view">
+            <field name="name">margin.tree</field>
+            <field name="model">margin.rate</field>
+            <field name="priority">4</field>
+            <field name="arch" type="xml">
+                <tree string="Margin Rate">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">margin.rate.form</field>
+            <field name="model">margin.rate</field>
+            <field name="arch" type="xml">
+                <form string="Sales Order Margin">
+					
+					<group>
+						<group>
+							<field name="name"/>
+							<field digits="(14, 3)" name="values"/>
+						</group>
+						<group>
+							<field name="active"/>
+						</group>
+					</group>
+					
+				</form>
+			</field>
+		</record>			
+		
+		<record id="margin_rate_form_action" model="ir.actions.act_window">
+            <field name="name">Sale Margin Rate</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">margin.rate</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="sale_margin_tree"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create for set the margin rate for product price. 
+              </p>
+            </field>
+        </record>
+        <menuitem action="margin_rate_form_action" id="menu_margin_rate_form_action" name="Margin Percentage" parent="purchase.menu_purchase_config" sequence="4"/>
+	
+	 
+        
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+           
+            <field name="domain">[('state','in',('purchase', 'purchase_amend', 'done'))]</field>
+            
+        </record>
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+			<field name="domain">[('state','in',('draft', 'sent', 'bid received', 'cancel', 'to approve'))]</field>
+        </record>		
+<!--
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+        <field name="name">Requests for Quotation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order</field>
+        <field name="context">{'search_default_todo':1}</field>
+        <field name="domain">[('state','in',('draft', 'sent', 'bid received', 'cancel', 'to approve'))]</field>
+        <field name="view_mode">tree,kanban,form,pivot,graph,calendar</field>
+        <field name="search_view_id" ref="purchase.view_purchase_order_filter"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Click to create a request for quotation.
+            </p><p>
+            The quotation contains the history of the discussion/negotiation
+            you had with your vendor. Once confirmed, a request for
+            quotation is converted into a purchase order.
+            </p><p>
+            Most propositions of purchase orders are created automatically
+            by Odoo based on inventory needs.
+            </p>
+        </field>
+</record>
+-->
+	</data>
+</openerp>				

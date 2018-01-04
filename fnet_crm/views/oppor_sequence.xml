@@ -1,0 +1,13 @@
+<openerp>
+	<data noupdate="0">
+		<record model="ir.sequence" id="enquiry_sequence">
+			<field name="name">Sequence For Opportunity</field>
+			<field name="code">enquiry.sequence</field>
+			<field name="implementation">standard</field>
+			<field name="active">TRUE</field>
+			<field name="prefix">ENQ</field>
+			<field name="padding">5</field>
+			<field name="number_increment">1</field>
+		</record>	
+	</data>
+</openerp>

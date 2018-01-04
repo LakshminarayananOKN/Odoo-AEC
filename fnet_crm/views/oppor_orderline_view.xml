@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		 <record id="opportunity_orderline" model="ir.ui.view">
+				<field name="name">opportunity_orderline</field>
+				<field name="model">crm.lead</field>
+				<field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+				<field name="arch" type="xml">
+					<xpath expr="//page[1]" position="before">
+						 <page string="Products">
+							   <field name="opportunity_order_line"  widget="one2many_list" attrs="{'readonly':[('tender_counter','!=',0)]}">
+									<tree editable="bottom">
+										<field name="lead_id" invisible="1"/>
+										<field name="product_id"/>
+										<field name="quantity" sum="Total Units"/>
+										<field name="unit_measure"/>
+										<field name="unit_price" sum="Total Unit Price" widget="monetary"/>
+									</tree>
+								</field>
+						</page>
+					</xpath>
+					<xpath expr="//button[@name='%(sale_crm.sale_action_quotations_new)d']" position="replace">
+						<button name="make_tender" string="Create Tenders" type="object" attrs="{'invisible': [('probability','!=',100)]}" class="oe_highlight"/>
+					</xpath>
+					<xpath expr="//label[@for='name']" position="before">
+						<h1><field name="oppor_order" placeholder="Opportunity ID"/></h1>
+					</xpath>
+
+					<xpath expr="//div[@name='button_box']" position="inside">
+						<button name="open_tender" class="oe_stat_button" type="object" icon="fa-usd" attrs="{'invisible': [('tender_counter','=',0)]}">
+
+                            <div class="o_stat_info">
+								<field name="tender_counter" class="o_stat_value"/>
+                                <span class="o_stat_text" style="text-align:center;!important">Tender(s) </span>
+                            </div>
+                        </button>
+					</xpath>
+					
+				</field>
+		 </record>
+		 <record id="crm_case_kanban_view_leads_inherit" model="ir.ui.view">
+            <field name="name">crm.lead.kanban.lead.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+            <field name="arch" type="xml">
+				<xpath expr="//div[@class='oe_kanban_content']/div[1]" position="before">
+					<div>
+						<style>
+							.oe_group_back{
+					           color: #9b59b6 ;
+					           }
+						</style>
+						<strong><field name="oppor_order" class="oe_group_back"/></strong>
+					</div>
+				</xpath>
+		    </field>
+		 </record>   
+		 <record id="opportunity_orderline_tree" model="ir.ui.view">
+				<field name="name">opportunity.orderline.tree</field>
+				<field name="model">crm.lead</field>
+				<field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+				<field name="arch" type="xml">
+					<field name="name" position="before">
+						
+						<field name="oppor_order" string="Reference"/>
+					</field>
+		        </field>
+		 </record>       
+		<record id="crm_case_form_view_oppor" model="ir.ui.view">
+            <field name="name">crm.lead.oppor.inherit.crm</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+            <field name="arch" type="xml">
+				<xpath expr="//div[@name='button_box']/button[@name='%(sale_crm.sale_action_quotations)d'][@icon='fa-pencil-square-o']" position="replace">
+					<button class="oe_stat_button" type="action" attrs="{'invisible': [('sale_number', '=', 0)]}"
+                            name="%(sale_crm.sale_action_quotations)d" icon="fa-pencil-square-o"
+                            context="{'default_partner_id': partner_id, 'search_default_draft': 1}">
+                        <div class="o_stat_info">
+                            <field name="sale_number" class="o_stat_value"/>
+                            <span class="o_stat_text"> Quote(s) </span>
+                        </div>
+                    </button>
+				</xpath>
+			</field>
+		</record>
+				
+										
+    </data>
+</openerp>

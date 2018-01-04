@@ -1,0 +1,13 @@
+<openerp>
+	<data noupdate="0">
+		<record model="ir.sequence" id="sale_order_sequence">
+			<field name="name">Sequence For Sale Order</field>
+			<field name="code">confirm.sale</field>
+			<field name="implementation">standard</field>
+			<field name="active">TRUE</field>
+			<field name="prefix">SO</field>
+			<field name="padding">5</field>
+			<field name="number_increment">1</field>
+		</record>
+	</data>
+</openerp>

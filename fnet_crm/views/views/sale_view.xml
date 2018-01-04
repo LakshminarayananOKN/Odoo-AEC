@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        
+        <record id="sale_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//page[2]" position="after">
+					<page string="Amendmend Notes">
+						<label for="amendment_notes" string="Amendmend Notes"/>
+							<div>
+								<field name="amendment_notes" attrs="{'required':[('state','in',['to approve','amendmend'])]}"/>	
+							</div>
+					</page>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="tender_id"/>
+                    <field name="enquiry_id"/>
+                   
+                </xpath>
+                
+                <field name="payment_term_id" position="attributes">
+					<attribute name="required">True</attribute>
+                </field>
+<!--
+                <field name="validity_date" position="attributes">
+					<attribute name="required">True</attribute>
+                </field>
+-->
+                <field name="client_order_ref" position="attributes">
+					<attribute name="required">True</attribute>
+                </field>
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sale,done"/>
+                </xpath>
+                
+                
+                <xpath expr="//button[@name='action_quotation_send'][@states='sent,sale']" position="replace">
+                    <button name="action_quotation_send" string="Send by Email" type="object" states="sale"/>
+                </xpath>
+                
+                
+                <xpath expr="//button[@name='print_quotation'][@states='sent,sale']" position="before">
+                    <button name="action_confirm_quote" states="draft" type="object" string="Confirm Quote"/>
+                    <button name="approve_quote" states="to approve" type="object" string="Approve" class="oe_highlight" groups="sales_team.group_sale_manager"/>
+                    <button name="quote_reject" states="to approve" type="object" string="Reject" class="oe_highlight" groups="sales_team.group_sale_manager"/>
+                    <button name="return_draft" states="amendmend" type="object" string="Return to Draft" class="oe_highlight"/>
+                    
+                </xpath>
+                
+                
+                <xpath expr="//button[@name='print_quotation'][@states='sent,sale']" position="replace">
+                    <button name="print_quotation" string="Print" type="object" states="sale"/>
+                </xpath>
+
+              
+                <xpath expr="//button[@name='action_confirm'][@states='draft']" position="replace">
+                    <button name="action_confirm" states="won,hold" string="Confirm Sale" type="object" context="{'show_sale': True}"/>
+                </xpath>                
+                
+                
+                <xpath expr="//button[@name='action_cancel']" position="replace">
+                    <button name="action_cancel" states="won,hold" type="object" string="Cancel"/>
+                </xpath>
+                
+                
+                <xpath expr="//button[@name='action_draft']" position="replace">
+                    <button name="action_draft" states="cancel,hold,drop,lost" type="object" string="Set to Draft"/>
+                </xpath>
+                
+                
+                <xpath expr="//button[last()]" position="after">
+                    <button name="action_quote_won"  states="sent" string="Quotation Won"  type="object"/>
+                    <button name="action_quote_drop" states="sent" string="Quotation Drop" type="object"/>
+                    <button name="action_quote_lost" states="sent" string="Quotation Lost" type="object"/>
+                    <button name="action_quote_hold" states="sent" string="Quotation Hold" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit' ]" position="before">
+					<field name="purchase_unit_price" groups="base.group_team_managers"/>
+					<field name="purchase_total_price" groups="sales_team.group_sale_manager" invisible="True"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form//field[@name='tax_id' ]" position="before">
+					<field name="purchase_unit_price" groups="base.group_team_managers"/>
+					<field name="purchase_total_price" groups="sales_team.group_sale_manager" invisible="True"/>
+                </xpath>         
+                <xpath expr="//field[@name='order_line']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','in',['sent','done','cancel'])]}</attribute>
+
+                </xpath>                                        
+            </field>
+        </record>
+<!--
+        <record id="view_order_form_inherit_fnet_report" model="ir.ui.view">
+            <field name="name">view.order.form.inherit.fnet.report</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="fnet_report.view_order_form_inherit"/>
+            <field name="arch" type="xml">
+				<field name="order_date" position="replace">
+					<field name="order_date" required="True"/>
+				</field>
+			</field>	
+        </record>
+-->
+        <record id="sale.action_quotations" model="ir.actions.act_window">
+            <field name="name">Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="sale.view_quotation_tree"/>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+            <field name="context">{}</field>
+            <field name="domain">[('state','not in',('sale','done'))]</field>
+            <field name="search_view_id" ref="sale.view_sales_order_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+              </p><p>
+                Your next actions should flow efficiently: confirm the Quotation 
+                to a Sale Order, then create the Invoice and collect the Payment.
+              </p><p>
+                Note that once a Quotation becomes a Sale Order, it will be moved 
+                from the Quotations list to the Sales Order list.
+              </p>
+            </field>
+        </record>
+        
+        
+        <record id="sale.view_sales_order_filter" model="ir.ui.view">
+            <field name="name">sale.order.list.select</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Sales Order">
+                    
+                    <field name="name" string="Sales Order" filter_domain="['|',('name','ilike',self),('client_order_ref','ilike',self)]"/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="user_id"/>
+                    <field name="team_id" string="Sales Team"/>
+                    <field name="project_id"/>
+                    <field name="product_id"/>
+                    <filter string="My Orders" domain="[('user_id','=',uid)]" name="my_sale_orders_filter"/>
+                    <separator/>
+                    
+                    <filter string="All Quotes"   name="all"  domain="[]"  help="Sales Order that haven't yet been confirmed"/>
+                    <filter string="Gain Quotes"  name="won"  domain="[('state','in',('won','hold'))]" />
+                    <filter string="Loss Quotes"  name="drop" domain="[('state','in',('drop','lost','cancel'))]"/>
+                    <separator/>
+                    
+                    <filter string="Sales" name="sales" domain="[('state','in',('sale','done'))]"/>
+                    <separator/>
+                    
+                    <filter string="To Invoice" domain="[('invoice_status','=','to invoice')]"/>
+                    <filter string="Upselling" domain="[('invoice_status','=','upselling')]"/>
+                    
+                    <separator/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter string="Salesperson" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter name="customer" string="Customer" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Order Month" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string="Status" context="{'group_by':'state'}"/>
+                    </group>
+                    
+               </search>
+            </field>
+        </record>            
+        
+        
+        <record id="sale_quote_tree_inherit" model="ir.ui.view">
+            <field name="name">sale.quote.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state"/>
+                </xpath>
+                
+                <xpath expr="//tree[@decoration-bf='message_needaction==True']" position="replace">
+                    <tree string="Quotation" decoration-bf="message_needaction==True" decoration-muted="state=='cancel'" colors="red:state=='lost'; coral:state=='drop'; blue:state=='hold'; green:state=='won'">
+                        <field name="message_needaction" invisible="1"/>
+                        <field name="name" string="Quotation Number"/>
+                        <field name="date_order"/>
+                        <field name="partner_id"/>
+                        <field name="user_id"/>
+                        <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                        <field name="state"/>
+                    </tree>
+                </xpath>
+
+            </field>
+        </record>
+        
+        <record id="view_approve_limit_tree" model="ir.ui.view">
+            <field name="name">approve.limit.tree</field>
+            <field name="model">approve.limit</field>
+            <field name="priority">4</field>
+            <field name="arch" type="xml">
+                <tree string="Limit Percentage">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_approve_limit_form" model="ir.ui.view">
+            <field name="name">approve.limit.form</field>
+            <field name="model">approve.limit</field>
+            <field name="arch" type="xml">
+                <form string="Limit of Approve">
+					
+					<group>
+						<group>
+							<field name="name"/>
+							<field digits="(14, 3)" name="values"/>
+						</group>
+						<group>
+							<field name="active"/>
+						</group>
+					</group>
+					
+				</form>
+			</field>
+		</record>			
+        <record id="manager_approve_limit" model="ir.actions.act_window">
+            <field name="name">Limit</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">approve.limit</field>
+<!--
+            <field name="view_type">form</field>
+-->
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_approve_limit_tree"/>
+            
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create for set the approve limit sale order.
+              </p>
+            </field>
+        </record>
+        
+        <menuitem id="menu_approve" parent="sales_team.menu_sale_config" name="Approve Limit" sequence="1" action="manager_approve_limit" groups="sales_team.group_sale_manager"/>
+    </data>
+</openerp>  
